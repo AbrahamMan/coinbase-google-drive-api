@@ -21,7 +21,6 @@ requests to the Google People API.
 ## create an account https://commerce.coinbase.com and it will automatically create a wallet for you.
 
 
-Oh! I haven't introduced this is Abraham ✋😀
 
 
 ## how to use it in coinbase
