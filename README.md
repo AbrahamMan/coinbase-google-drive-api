@@ -1,7 +1,7 @@
 # Integration coinbase with Google Drive API integration 
 
 Welcome to Integration coinbase with Google Drive API integration repository. This repository will be used to send different Google drive files using email that I will be guiding you through. and in about five minutes you'll have a simple Python server application that listen and send
-requests to the Google People API.
+requests to the Google Drive API.
 
 ## From Google Developer Console activate Google Drive API and download credentials.json file which looks like this 👇.
 

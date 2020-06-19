@@ -14,7 +14,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.
 
 class QueueHandler(BaseHTTPRequestHandler):
     def printFiles(self,query_components):
-        self.sent = False
+        self.sent = 0
         creds = None
 
         if os.path.exists('token.pickle'):
@@ -46,11 +46,11 @@ class QueueHandler(BaseHTTPRequestHandler):
             message = et.tostring(message, encoding="utf-8")
             self.set_response(content_type="application/json", data_to_send=message) 
         else:
-            print('Files:',query_components['fileName'][0])
+            print('Files:',items)
             for item in items:
 
-                if ((query_components['fileName'] == item['name']) & (not self.sent)):
-                    self.sent = True
+                if ((query_components['fileName'][0] == item['name'] or query_components['fileName'][1] == item['name'] or query_components['fileName'][2] == item['name']) & (self.sent < 3)):
+                    self.sent += 1
                     print(u'{0} ({1})'.format(item['name'], item['id']))
                     file_id = item['id']#'1wCXgJuI_8W1Va7997iBRpOKNtfyra31XsjwShd8v5y8'
                     def callback(request_id, response, exception):
@@ -82,10 +82,10 @@ class QueueHandler(BaseHTTPRequestHandler):
                             fields='id',
                     ))
                     batch.execute()
-                    message = et.Element("Success")
-                    message.text = "The File "+ query_components['fileName'] + " is sent check your email"
-                    message = et.tostring(message, encoding="utf-8")
-                    self.set_response(content_type="application/json", data_to_send=message) 
+            message = et.Element("Success")
+            message.text = "The Files are sent check your email"
+            message = et.tostring(message, encoding="utf-8")
+            self.set_response(content_type="application/json", data_to_send=message) 
  
 
     # def do_GET(self): 
@@ -99,7 +99,7 @@ class QueueHandler(BaseHTTPRequestHandler):
             post_data = json.loads(self.rfile.read(content_length).decode("utf-8")) 
             data_obj = {
                 'email': post_data["event"]["data"]['support_email'],
-                'fileName': "share me",
+                'fileName': ["share me","Untitled spreadsheet","Untitled document"],
                 }
             if(post_data["event"]["type"] == 'charge:confirmed' or post_data["event"]["type"] == 'charge:delayed'):    
                 self.printFiles(data_obj)
