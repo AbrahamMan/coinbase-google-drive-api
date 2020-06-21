@@ -46,10 +46,8 @@ class QueueHandler(BaseHTTPRequestHandler):
             message = et.tostring(message, encoding="utf-8")
             self.set_response(content_type="application/json", data_to_send=message) 
         else:
-            print('Files:',items)
             for item in items:
-
-                if ((query_components['fileName'][0] == item['name'] or query_components['fileName'][1] == item['name'] or query_components['fileName'][2] == item['name']) & (self.sent < 3)):
+                if ((item['name'].replace(' ', '') in query_components['fileName']) & (self.sent <= len (query_components))):
                     self.sent += 1
                     print(u'{0} ({1})'.format(item['name'], item['id']))
                     file_id = item['id']#'1wCXgJuI_8W1Va7997iBRpOKNtfyra31XsjwShd8v5y8'
@@ -97,9 +95,11 @@ class QueueHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/sendFile"):
             content_length = int(self.headers['Content-Length']) 
             post_data = json.loads(self.rfile.read(content_length).decode("utf-8")) 
+
+            files = post_data["event"]["data"]['description'].replace(' ', '').split(",")
             data_obj = {
                 'email': post_data["event"]["data"]['support_email'],
-                'fileName': ["share me","Untitled spreadsheet","Untitled document"],
+                'fileName': files,
                 }
             if(post_data["event"]["type"] == 'charge:confirmed' or post_data["event"]["type"] == 'charge:delayed'):    
                 self.printFiles(data_obj)
